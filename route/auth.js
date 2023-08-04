@@ -59,17 +59,17 @@ router.post('/createEvent',verifyToken,async(req,res)=>{
         if(!user){
             return res.status(404).json({message:"user not found"})
         }
-        const event = await Event.create({
+        const event = new Event({
             name,
             date,
             startTime,
             endTime,
-            user:user._id// use the user's id as refernce
+            user:user// use the user's id as refernce
         })
-        console.log(event)
         //add the event id to the user's event array
         user.event.push(event._id)
         await user.save()
+        await event.save()
         res.status(201).json({message:"event created successfully",event})
     }catch(error){
         console.log(error)
@@ -79,7 +79,7 @@ router.post('/createEvent',verifyToken,async(req,res)=>{
 router.get('/event',verifyToken,async(req,res)=>{
    try{
     const{username}=req.decoded
-    const user= await User.finOne({username}).populate('event')
+    const user= await User.findOne({username}).populate('event')
     if(!user){
        return res.status(404).json({message:"user not found"}) 
        

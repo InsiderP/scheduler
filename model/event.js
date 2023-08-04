@@ -23,4 +23,4 @@ const eventSchema=mongoose.Schema({
         required: true
      }
  })
- module.export=mongoose.model("Event",eventSchema)
+ module.exports=mongoose.model("Event",eventSchema)
