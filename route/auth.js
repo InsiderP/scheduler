@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const User = require('../model/user');
 const verifyToken=require('../middleware/validation')
-const user = require('../model/user');
-const event = require('../model/event');
+const Event = require('../model/event');
 
 router.post('/register',async (req,res)=>{
     try{
@@ -56,7 +55,7 @@ router.post('/createEvent',verifyToken,async(req,res)=>{
     try{
         const{name,date,startTime,endTime}=req.body
         const{username}=req.decoded
-        const user = await User.finOne({username})
+        const user = await User.findOne({username})
         if(!user){
             return res.status(404).json({message:"user not found"})
         }
@@ -67,11 +66,13 @@ router.post('/createEvent',verifyToken,async(req,res)=>{
             endTime,
             user:user._id// use the user's id as refernce
         })
+        console.log(event)
         //add the event id to the user's event array
         user.event.push(event._id)
         await user.save()
         res.status(201).json({message:"event created successfully",event})
     }catch(error){
+        console.log(error)
         res.status(500).json({message:"an error occured",error:error.message})
     }
 })
