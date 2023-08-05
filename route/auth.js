@@ -48,12 +48,10 @@ router.post('/login',async(req,res)=>{
           
     }
 })
-router.get('/curent',async(req,res)=>{
-    res.json(req.user)
-})
+
 router.post('/createEvent',verifyToken,async(req,res)=>{
     try{
-        const{name,date,startTime,endTime}=req.body
+        const{name,startTimeStamp,endTimeStamp}=req.body
         const{username}=req.decoded
         const user = await User.findOne({username})
         if(!user){
@@ -61,9 +59,8 @@ router.post('/createEvent',verifyToken,async(req,res)=>{
         }
         const event = new Event({
             name,
-            date,
-            startTime,
-            endTime,
+            startTimeStamp,
+            endTimeStamp,
             user:user// use the user's id as refernce
         })
         //add the event id to the user's event array
@@ -78,7 +75,6 @@ router.post('/createEvent',verifyToken,async(req,res)=>{
 })
 router.get('/event',verifyToken,async(req,res)=>{
    try{
-    const{username}=req.decoded
     const user= await User.findOne({username}).populate('event')
     if(!user){
        return res.status(404).json({message:"user not found"}) 
@@ -90,5 +86,32 @@ router.get('/event',verifyToken,async(req,res)=>{
         res.status(500).json({ message: 'An error occurred', error: error.message });
       }
 })
-router.get('/valid',verifyToken)
+router.get('/event/:id',verifyToken,async(req,res)=>{
+    try{
+        const id=req.params.id 
+        const event = await Event.findOne({_id:id})
+        res.json(event)
+
+    }catch(error){
+        res.status(500).json({message:'an error occured',error:error.message})
+    }
+})
+router.put("/update/:id",verifyToken,async(req,res)=>{
+    try{
+        const id=req.params.id
+        const event =await Event.findOne({_id:id})
+        if(!event){
+            res.json({message:"not found"})
+        }
+        const updateContact= await Event.findByIdAndUpdate(
+            id,
+            req.body,
+            {new:true}
+        )
+      res.json({ message:"updated"})
+
+    }catch(error){
+        res.status(500).json({message:'an error occured',error:error.message})
+    }
+})
 module.exports = router

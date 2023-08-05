@@ -4,16 +4,12 @@ const eventSchema=mongoose.Schema({
      name:{
         type:String,
         require:true
-     },
-     date: { 
-        type: String,
-         required: true 
-        }, 
-     startTime: { 
+     }, 
+     startTimeStamp: { 
         type: String, 
         required: true 
     }, 
-     endTime: { 
+     endTimeStamp: { 
         type: String, 
         required: true 
     },
@@ -23,4 +19,5 @@ const eventSchema=mongoose.Schema({
         required: true
      }
  })
+ 
  module.exports=mongoose.model("Event",eventSchema)
