@@ -75,6 +75,7 @@ router.post('/createEvent',verifyToken,async(req,res)=>{
 })
 router.get('/event',verifyToken,async(req,res)=>{
    try{
+    const{username}=req.decoded
     const user= await User.findOne({username}).populate('event')
     if(!user){
        return res.status(404).json({message:"user not found"}) 
