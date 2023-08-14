@@ -5,7 +5,7 @@ const router = express.Router();
 const User = require('../model/user');
 const verifyToken=require('../middleware/validation')
 const Event = require('../model/event');
-
+const cron = require('node-cron')
 router.post('/register',async (req,res)=>{
     try{
         const{id,firstname,lastname,username,password}=req.body
@@ -67,12 +67,28 @@ router.post('/createEvent',verifyToken,async(req,res)=>{
         user.event.push(event._id)
         await user.save()
         await event.save()
+        
+        cron.schedule(
+            '*/10 * * * * *',
+            () => {
+                // The function you want to run 15 seconds before the event
+                console.log(`Scheduled task for event '${event.name}' is running...`)
+                // You can put your notification logic or other actions here
+            },
+            {
+                scheduled: true,
+            }
+        )
         res.status(201).json({message:"event created successfully",event})
     }catch(error){
         console.log(error)
         res.status(500).json({message:"an error occured",error:error.message})
     }
 })
+// corn.schedule('*/10 * * * * *',()=>{
+//     console.log('hello world')
+// })
+
 router.get('/event',verifyToken,async(req,res)=>{
    try{
     const{username}=req.decoded
