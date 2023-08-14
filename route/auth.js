@@ -71,9 +71,9 @@ router.post('/createEvent',verifyToken,async(req,res)=>{
         cron.schedule(
             '*/10 * * * * *',
             () => {
-                // The function you want to run 15 seconds before the event
+                
                 console.log(`Scheduled task for event '${event.name}' is running...`)
-                // You can put your notification logic or other actions here
+                
             },
             {
                 scheduled: true,
